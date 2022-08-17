@@ -1,7 +1,7 @@
 /**
  * Router for domain.com/authorize/xxx
  */
-import express, {Request, Response} from "express";
+import express from "express";
 import { authorizeAdmin } from "../controllers/AuthorizeControllers/authorizeAdmin";
 const AuthorizeRouter = express.Router();
 

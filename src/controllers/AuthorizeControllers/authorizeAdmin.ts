@@ -10,9 +10,18 @@ export const authorizeAdmin = (req: Request, res: Response) => {
     
     const { secret } = req.body;
     
-    if (secret === process.env.ADMIN_SECRET) {
-        return res.sendStatus(200);
+    if (!isAdmin(secret)) {
+        return res.sendStatus(401);
     }
 
     res.sendStatus(401);
+}
+
+/**
+ * 
+ * @param {string} secret The secret that was sent to the server
+ * @returns {boolean} True if it's correct, false if not
+ */
+const isAdmin = (secret: string): boolean => {
+    return secret === process.env.ADMIN_SECRET;
 }
