@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Document } from "mongoose";
 import { BookingModel } from "../../database/schemas/bookingSchema";
+import { FlamingoResponse } from "../../models/FlamingoResponse";
 import { validateCreateBooking } from "../../validation/BookingsValidation/validateCreateBooking";
 
 /**
@@ -10,10 +11,13 @@ import { validateCreateBooking } from "../../validation/BookingsValidation/valid
  * @returns {Promise<void>}
  */
 export const createBooking = async (req: Request, res: Response): Promise<void> => {
+    const response = new FlamingoResponse();
+
     const validationResponse = validateCreateBooking(req.body);
 
     if (!validationResponse.valid) {
-        res.status(400).json(validationResponse)
+        response.error = validationResponse.message || 'An error has occured';
+        res.status(400).json(response);
         return;
     }
 
@@ -21,10 +25,13 @@ export const createBooking = async (req: Request, res: Response): Promise<void> 
 
     try {
         await Booking.save();
-        res.sendStatus(200);
+        response.message = 'Successfully created a booking';
+
+        res.status(200).json(response);
     } catch (error) {
         console.log(error);
-        res.sendStatus(500);
+        response.error = 'There was an issue connecting to the database';
+        res.status(500).json(response);
     }
 }
 
