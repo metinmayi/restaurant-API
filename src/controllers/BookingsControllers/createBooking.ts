@@ -4,7 +4,7 @@ import { BookingModel } from '../../database/schemas/bookingSchema';
 import { FlamingoResponse } from '../../models/FlamingoResponse';
 import { validateCreateBooking } from '../../validation/BookingsValidation/validateCreateBooking';
 import { convertVisitorsToTables } from './BookingsUtils/convertVisitorsToTables';
-import { getAvailableTables } from './BookingsUtils/getAvailableSlots';
+import { getAvailableTables } from './BookingsUtils/getAvailableTables';
 
 /**
  * Creates a new booking in the database
