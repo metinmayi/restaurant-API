@@ -14,7 +14,7 @@ export const authorizeAdmin = (req: Request, res: Response) => {
         return res.sendStatus(401);
     }
 
-    res.sendStatus(401);
+    res.sendStatus(200);
 }
 
 /**
