@@ -5,6 +5,7 @@ import { FlamingoResponse } from '../../models/FlamingoResponse';
 import { validateCreateBooking } from '../../validation/BookingsValidation/validateCreateBooking';
 import { convertVisitorsToTables } from './BookingsUtils/convertVisitorsToTables';
 import { getAvailableTables } from './BookingsUtils/getAvailableTables';
+import { getCustomerId } from './BookingsUtils/getUserById';
 
 /**
  * Creates a new booking in the database
@@ -26,12 +27,11 @@ export const createBooking = async (
     return;
   }
 
-  const Booking = constructBooking(req.body);
-  const { date, time, visitors } = Booking.toJSON();
+  const { date, time, visitors, email, name, phone } = req.body;
 
   try {
+    const userId = await getCustomerId(email, name, phone);
     const availableTables = await getAvailableTables(date, time);
-
     const requiredTables = convertVisitorsToTables(visitors);
 
     if (availableTables < requiredTables) {
@@ -40,6 +40,7 @@ export const createBooking = async (
       return;
     }
 
+    const Booking = constructBooking(req.body, userId);
     await Booking.save();
     response.message = 'Successfully created a booking';
 
@@ -56,17 +57,15 @@ export const createBooking = async (
  * @param reqBody RequestBody from Express
  * @returns {Document} Booking Document
  */
-const constructBooking = (reqBody: any): Document => {
-  const { date, time, name, phone, email, visitors } = reqBody;
+const constructBooking = (reqBody: any, userId: string): Document => {
+  const { date, time, visitors } = reqBody;
 
   const tables = convertVisitorsToTables(visitors);
 
   const Booking = new BookingModel({
     date,
     time,
-    name,
-    phone,
-    email,
+    userId,
     visitors,
     tables,
   });
