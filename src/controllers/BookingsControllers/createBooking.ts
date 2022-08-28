@@ -1,11 +1,11 @@
-import { Request, Response } from 'express';
-import { Document } from 'mongoose';
-import { BookingModel } from '../../database/schemas/bookingSchema';
-import { FlamingoResponse } from '../../models/FlamingoResponse';
-import { validateCreateBooking } from '../../validation/BookingsValidation/validateCreateBooking';
-import { convertVisitorsToTables } from './BookingsUtils/convertVisitorsToTables';
-import { getAvailableTables } from './BookingsUtils/getAvailableTables';
-import { getCustomerId } from './BookingsUtils/getUserById';
+import { Request, Response } from "express";
+import { Document } from "mongoose";
+import { BookingModel } from "../../database/schemas/bookingSchema";
+import { FlamingoResponse } from "../../models/FlamingoResponse";
+import { validateCreateBooking } from "../../validation/BookingsValidation/validateCreateBooking";
+import { convertVisitorsToTables } from "./BookingsUtils/convertVisitorsToTables";
+import { getAvailableTables } from "./BookingsUtils/getAvailableTables";
+import { getCustomerEmail } from "./BookingsUtils/getUserById";
 
 /**
  * Creates a new booking in the database
@@ -22,7 +22,7 @@ export const createBooking = async (
   const validationResponse = validateCreateBooking(req.body);
 
   if (!validationResponse.valid) {
-    response.error = validationResponse.message || 'An error has occured';
+    response.error = validationResponse.message || "An error has occured";
     res.status(400).json(response);
     return;
   }
@@ -30,24 +30,24 @@ export const createBooking = async (
   const { date, time, visitors, email, name, phone } = req.body;
 
   try {
-    const userId = await getCustomerId(email, name, phone);
+    const userEmail = await getCustomerEmail(email, name, phone);
     const availableTables = await getAvailableTables(date, time);
     const requiredTables = convertVisitorsToTables(visitors);
 
     if (availableTables < requiredTables) {
-      response.error = 'There are not enough available tables';
+      response.error = "There are not enough available tables";
       res.status(200).json(response);
       return;
     }
 
-    const Booking = constructBooking(req.body, userId);
+    const Booking = constructBooking(req.body, userEmail);
     await Booking.save();
-    response.message = 'Successfully created a booking';
+    response.message = "Successfully created a booking";
 
     res.status(200).json(response);
   } catch (error) {
     console.log(error);
-    response.error = 'There was an issue connecting to the database';
+    response.error = "There was an issue connecting to the database";
     res.status(500).json(response);
   }
 };
@@ -57,7 +57,7 @@ export const createBooking = async (
  * @param reqBody RequestBody from Express
  * @returns {Document} Booking Document
  */
-const constructBooking = (reqBody: any, userId: string): Document => {
+const constructBooking = (reqBody: any, email: string): Document => {
   const { date, time, visitors } = reqBody;
 
   const tables = convertVisitorsToTables(visitors);
@@ -65,7 +65,7 @@ const constructBooking = (reqBody: any, userId: string): Document => {
   const Booking = new BookingModel({
     date,
     time,
-    userId,
+    email,
     visitors,
     tables,
   });

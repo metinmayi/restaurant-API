@@ -1,24 +1,23 @@
-import { CustomerModel } from '../../../database/schemas/customerSchema';
+import { CustomerModel } from "../../../database/schemas/customerSchema";
 
 /**
- * Retrieves a customers ID. If no customer exists, create a new one with the provided parameters
- * and return the newly created ID.
+ * Retrieves a customers Email. If no customer exists, create a new one with the provided parameters
+ * and return the newly created Email.
  * @param email Customers email adress
  * @param name Customers name
  * @param phone Customers phonenumber
- * @returns MongoDB objectID
+ * @returns Customers Email
  */
-export const getCustomerId = async (
+export const getCustomerEmail = async (
   email: string,
   name: string,
   phone: string
 ) => {
-  debugger;
   let existingCustomer = await CustomerModel.find({ email });
   if (existingCustomer[0]) {
-    return existingCustomer[0].id;
+    return existingCustomer[0].email;
   }
   const newCustomer = new CustomerModel({ email, name, phone });
   const insertedCustomer = await newCustomer.save();
-  return insertedCustomer.id;
+  return insertedCustomer.email;
 };
