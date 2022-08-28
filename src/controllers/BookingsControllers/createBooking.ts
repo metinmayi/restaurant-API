@@ -5,7 +5,7 @@ import { FlamingoResponse } from "../../models/FlamingoResponse";
 import { validateCreateBooking } from "../../validation/BookingsValidation/validateCreateBooking";
 import { convertVisitorsToTables } from "./BookingsUtils/convertVisitorsToTables";
 import { getAvailableTables } from "./BookingsUtils/getAvailableTables";
-import { getCustomerEmail } from "./BookingsUtils/getUserById";
+import { getCustomerEmail } from "./BookingsUtils/getCustomerEmail";
 
 /**
  * Creates a new booking in the database
