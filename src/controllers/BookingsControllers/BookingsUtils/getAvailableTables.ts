@@ -13,13 +13,9 @@ export const getAvailableTables = async (date: string, time: 18 | 21) => {
     time,
   }).lean();
 
-  console.log(currentBookings);
-
   const occupiedTables = currentBookings.reduce((a, b) => {
     return (a += b.tables);
   }, 0);
-
-  console.log(occupiedTables);
 
   return 15 - occupiedTables;
 };
