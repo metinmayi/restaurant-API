@@ -14,10 +14,10 @@ export const patchBooking = async (req: Request, res: Response) => {
     return;
   }
 
-  const { date, time, tables, _id } = req.body;
+  const { date, time, tables, _id, email } = req.body;
 
   try {
-    await BookingModel.updateOne({ _id }, { date, time, tables });
+    await BookingModel.updateOne({ _id }, { date, time, tables, email });
     response.message = "Successfully updated the booking";
     res.status(200).json(response);
   } catch (error) {
