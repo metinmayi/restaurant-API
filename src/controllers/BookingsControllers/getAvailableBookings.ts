@@ -13,45 +13,47 @@ import { getAvailableTables } from "./BookingsUtils/getAvailableTables";
  */
 export const getAvailableBookings = async (req: Request, res: Response) => {
   const response = new FlamingoResponse();
-  console.log(req.query);
   const validationResponse = validateGetAvailableBookings(req.query);
 
-  if (!validationResponse.valid) {
-    response.error = validationResponse.message || "An error has occured";
+  if (!validationResponse.valid || !isResponse(req.query)) {
+    response.error = validationResponse.message || "Invalid payload";
     res.status(400).json(response);
     return;
   }
-  if (typeof req.query.date !== "string") {
-    return;
+
+  try {
+    const availableTables = await getAvailableTables(
+      req.query.date,
+      req.query.time
+    );
+    const requiredTables = convertVisitorsToTables(+req.query.visitors);
+    const isEnough = requiredTables <= availableTables;
+
+    response.message = "Booking status:";
+    response.data.push(isEnough);
+    res.status(200).json(response);
+  } catch (error: any) {
+    console.log(error);
+    response.error = error;
+    res.status(500).json(response);
   }
-  console.log("Date ok");
-
-  const time = req.query.time || "0";
-
-  const converted = +time;
-
-  if (converted !== 18 && converted !== 21) {
-    return;
-  }
-  console.log("Time ok");
-
-  const availableTables = await getAvailableTables(req.query.date, converted);
-
-  if (!req.query.visitors) {
-    return;
-  }
-  if (+req.query.visitors < 1 || +req.query.visitors > 90) {
-    return;
-  }
-  console.log("visitors ok");
-
-  const requiredTables = convertVisitorsToTables(+req.query.visitors);
-  console.log(requiredTables);
-  console.log(availableTables);
-
-  const isEnough = requiredTables <= availableTables;
-
-  response.data.push(isEnough);
-
-  res.status(200).json(response);
 };
+
+/**
+ * Type predicate for the getAvailableBookings
+ * @param reqParams The request query
+ * @returns reqParams is ValidResponse
+ */
+const isResponse = (reqParams: any): reqParams is validResponse => {
+  return (
+    typeof reqParams.date === "string" &&
+    typeof +reqParams.visitors === "number" &&
+    (+reqParams.time === 18 || +reqParams.time === 21)
+  );
+};
+
+interface validResponse {
+  date: "string";
+  time: 18 | 21;
+  visitors: number;
+}
