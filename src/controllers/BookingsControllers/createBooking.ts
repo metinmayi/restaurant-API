@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { Document } from "mongoose";
 import { BookingModel } from "../../database/schemas/bookingSchema";
+import { bookingConfirmation } from "../../email/messages/bookingConfirmation";
 import { FlamingoResponse } from "../../models/FlamingoResponse";
 import { validateCreateBooking } from "../../validation/BookingsValidation/validateCreateBooking";
 import { convertVisitorsToTables } from "./BookingsUtils/convertVisitorsToTables";
@@ -42,6 +43,7 @@ export const createBooking = async (
 
     const Booking = constructBooking(req.body, userEmail);
     await Booking.save();
+    await bookingConfirmation(email, Booking._id);
     response.message = "Successfully created a booking";
 
     res.status(200).json(response);
