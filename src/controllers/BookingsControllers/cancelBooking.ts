@@ -3,10 +3,9 @@ import { BookingModel } from "../../database/schemas/bookingSchema";
 import { FlamingoResponse } from "../../models/FlamingoResponse";
 import { validateCancelBooking } from "../../validation/BookingsValidation/validateCancelBooking";
 export const cancelBooking = async (req: Request, res: Response) => {
-  debugger;
-  const { _id } = req.query;
+  const { _id } = req.body;
   const response = new FlamingoResponse();
-  const isValid = validateCancelBooking(req.query);
+  const isValid = validateCancelBooking(req.body);
   if (!isValid.valid) {
     response.error = isValid.message || "Could not validate the request body";
     return res.status(400).json(response);

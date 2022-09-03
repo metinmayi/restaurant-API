@@ -8,8 +8,7 @@ export const sendBookingConfirmation = async (
     from: "Flamingo@gmail.com",
     to: customerEmail,
     subject: "Bokningsbekräftelse",
-    html: `<html><body><p>Tack för din bokning. Tryck på denna <a href="http://localhost:${process.env.PORT}/cancelBooking/${bookingId}">länk</a> om du vill avboka.</p></body></html>`,
+    html: `<html><body><p>Tack för din bokning. Tryck på denna <a href="http://localhost:3000/cancel/${bookingId}">länk</a> om du vill avboka.</p></body></html>`,
   };
-  debugger;
   await transporter.sendMail(message);
 };
