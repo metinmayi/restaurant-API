@@ -2,6 +2,7 @@
  * Router for domain.com/bookings/xxx
  */
 import express from "express";
+import { cancelBooking } from "../controllers/BookingsControllers/cancelBooking";
 import { createBooking } from "../controllers/BookingsControllers/createBooking";
 import { getAllBookings } from "../controllers/BookingsControllers/getAllBookings";
 import { getAvailableBookings } from "../controllers/BookingsControllers/getAvailableBookings";
@@ -12,5 +13,6 @@ BookingsRouter.get("/getAvailableBookings", getAvailableBookings);
 BookingsRouter.get("/getAllBookings", getAllBookings);
 BookingsRouter.post("/createBooking", createBooking);
 BookingsRouter.patch("/patchBooking", patchBooking);
+BookingsRouter.delete("/cancelBooking", cancelBooking);
 
 export default BookingsRouter;
