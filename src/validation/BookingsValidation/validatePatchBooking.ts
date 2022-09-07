@@ -7,6 +7,7 @@ const schema = Joi.object({
   time: Joi.number().valid(18, 21).required(),
   email: Joi.string().email().required(),
   visitors: Joi.number().required(),
+  originalEmail: Joi.string().email().required(),
 });
 
 /**

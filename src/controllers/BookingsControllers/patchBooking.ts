@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { BookingModel } from "../../database/schemas/bookingSchema";
+import { CustomerModel } from "../../database/schemas/customerSchema";
 import { FlamingoResponse } from "../../models/FlamingoResponse";
 import { validatePatchBooking } from "../../validation/BookingsValidation/validatePatchBooking";
 import { convertVisitorsToTables } from "./BookingsUtils/convertVisitorsToTables";
@@ -15,7 +16,8 @@ export const patchBooking = async (req: Request, res: Response) => {
     return;
   }
 
-  const { date, time, visitors, _id, email } = req.body;
+  const { date, time, visitors, _id, email, originalEmail } = req.body;
+  console.log(originalEmail, email);
   const tables = convertVisitorsToTables(visitors);
 
   try {
@@ -23,6 +25,13 @@ export const patchBooking = async (req: Request, res: Response) => {
       { _id },
       { date, time, visitors, email, tables }
     );
+
+    await BookingModel.updateMany({ email: originalEmail }, { email });
+
+    if (originalEmail !== email) {
+      await CustomerModel.updateOne({ email: originalEmail }, { email });
+    }
+
     response.message = "Successfully updated the booking";
     res.status(200).json(response);
   } catch (error) {
