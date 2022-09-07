@@ -17,7 +17,6 @@ export const patchBooking = async (req: Request, res: Response) => {
   }
 
   const { date, time, visitors, _id, email, originalEmail } = req.body;
-  console.log(originalEmail, email);
   const tables = convertVisitorsToTables(visitors);
 
   try {
