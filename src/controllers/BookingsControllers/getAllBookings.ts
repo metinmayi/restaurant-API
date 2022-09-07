@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import "../../database/database";
 import { BookingModel } from "../../database/schemas/bookingSchema";
 import { FlamingoResponse } from "../../models/FlamingoResponse";
 
@@ -14,7 +13,7 @@ export const getAllBookings = async (req: Request, res: Response) => {
 
   try {
     const bookings = await BookingModel.find().select(
-      "_id date time email tables"
+      "_id date time email visitors"
     );
     response.message = "Successfully retrieved all bookings";
     response.data = bookings;

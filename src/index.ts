@@ -3,6 +3,8 @@ import cors from "cors";
 import "dotenv/config";
 import AuthorizeRouter from "./routes/AuthorizeRouter";
 import BookingsRouter from "./routes/BookingsRouter";
+import "./database/database";
+
 const server = express();
 
 server.use(cors());
