@@ -11,6 +11,7 @@ export const getAvailableTables = async (date: string, time: 18 | 21) => {
   const currentBookings = await BookingModel.find({
     date,
     time,
+    archived: false,
   }).lean();
 
   const occupiedTables = currentBookings.reduce((a, b) => {

@@ -70,6 +70,7 @@ const constructBooking = (reqBody: any, email: string): Document => {
     email,
     visitors,
     tables,
+    archived: false,
   });
 
   return Booking;

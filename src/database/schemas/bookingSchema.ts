@@ -6,6 +6,7 @@ interface IBooking {
   email: string;
   visitors: number;
   tables: number;
+  archived: boolean;
 }
 
 const bookingSchema = new mongoose.Schema<IBooking>({
@@ -14,6 +15,7 @@ const bookingSchema = new mongoose.Schema<IBooking>({
   email: { type: String, required: true },
   visitors: { type: Number, required: true },
   tables: { type: Number, required: true },
+  archived: { type: Boolean, required: true },
 });
 
 export const BookingModel = mongoose.model("Booking", bookingSchema);
