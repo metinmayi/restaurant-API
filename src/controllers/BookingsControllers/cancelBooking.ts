@@ -12,7 +12,6 @@ export const cancelBooking = async (req: Request, res: Response) => {
   }
 
   try {
-    debugger;
     const result = await BookingModel.updateOne({ _id }, { archived: true });
     response.message = result.modifiedCount
       ? "Booking has been deleted"
