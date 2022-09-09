@@ -4,6 +4,7 @@ import { CustomerModel } from "../../database/schemas/customerSchema";
 import { FlamingoResponse } from "../../models/FlamingoResponse";
 import { validatePatchBooking } from "../../validation/BookingsValidation/validatePatchBooking";
 import { convertVisitorsToTables } from "./BookingsUtils/convertVisitorsToTables";
+import { isRebookable } from "./BookingsUtils/isRebookable";
 
 export const patchBooking = async (req: Request, res: Response) => {
   const response = new FlamingoResponse();
@@ -17,6 +18,18 @@ export const patchBooking = async (req: Request, res: Response) => {
   }
 
   const { date, time, visitors, _id, email, originalEmail } = req.body;
+  const actualTime = +time;
+  if (actualTime !== 21 && actualTime !== 18) {
+    return;
+  }
+
+  const canBook = await isRebookable(date, _id, actualTime, visitors);
+  if (!canBook) {
+    response.error = "Not enough tables";
+    res.status(400).json(response);
+    return;
+  }
+
   const tables = convertVisitorsToTables(visitors);
 
   try {
